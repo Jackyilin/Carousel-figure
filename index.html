@@ -8,20 +8,20 @@
             margin: 0;
             padding: 0;
         }
-        li{
-            list-style: none;
-        }
         a{
-            text-decoration: none;
+            text-decoration: 0;
+        }
+        ul{
+            list-style: none;
         }
         img{
             border: 0;
         }
         #container{
+            position: relative;
             width: 680px;
             height: 344px;
-            position: relative;
-            margin: 100px auto;
+            margin: 30px auto;
         }
         #imgs img{
             display: none;
@@ -37,16 +37,16 @@
         #nav li, #arrows span{
             width: 20px;
             height: 20px;
-            background: #000000;
-            color: #fff;
+            background: #000;
             text-align: center;
             line-height: 20px;
-            cursor: pointer;
+            color: #fff;
             float: left;
             margin-right: 5px;
+            cursor: pointer;
         }
         #nav .selected{
-            background: orange;
+            background: #ff6600;
         }
         #arrows{
             position: absolute;
@@ -54,73 +54,84 @@
             bottom: 10px;
         }
     </style>
-
 </head>
 <body>
-    <div id="container">
-        <div id="imgs">
-            <img src="img/1.jpg" alt="" class="selected">
-            <img src="img/2.jpg" alt="">
-            <img src="img/3.jpg" alt="">
-            <img src="img/4.jpg" alt="">
-        </div>
-        <ul id="nav">
-            <li class="selected">1</li>
-            <li>2</li>
-            <li>3</li>
-            <li>4</li>
-        </ul>
-        <div id="arrows">
-            <span id="prev">&lt;</span>
-            <span id="next">&gt;</span>
-        </div>
+<div id="container">
+    <div id="imgs">
+        <img src="img/1.jpg" alt="" class="selected">
+        <img src="img/2.jpg" alt="">
+        <img src="img/3.jpg" alt="">
+        <img src="img/4.jpg" alt="">
     </div>
+    <ul id="nav">
+        <li class="selected">1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+    </ul>
+    <div id="arrows">
+        <span id="prev">&lt;</span>
+        <span id="next">&gt;</span>
+    </div>
+</div>
+<script>
+    var oContainer = document.getElementById("container");
+    var oNav = document.getElementById("nav");
+    var oImgs = document.getElementById("imgs");
+    var oPrev = document.getElementById("prev");
+    var oNext = document.getElementById("next");
+    var aLi = oNav.getElementsByTagName("li");
+    var aImgs = oImgs.getElementsByTagName("img");
 
-    <script src="jquery-1.12.4.js"></script>
-    <script>
-        $(function(){
-            var nowIndex = 0;//当前显示的下标
-            var timer;
-            var $lis = $("#nav li");
-            $lis.on("mouseover", function(){
-                nowIndex = $(this).index();
-                changeImg();
-            });
-            $("#prev").on("click", function(){
-                nowIndex--;
-                if(nowIndex == -1){
-                    nowIndex = $lis.length - 1;
-                }
-                changeImg();
-            });
-            $("#next").on("click", function(){
-                nowIndex++;
-                if(nowIndex == $lis.length){
-                    nowIndex = 0;
-                }
-                changeImg();
-            });
-            play();
 
-            $("#container").hover(function(){
-                clearInterval(timer);
-            }, function(){
-                play();
-            });
+    var nowIndex = 0;
+    var timer;
 
-            function play(){
-                timer = setInterval(function(){
-                    $("#next").trigger("click");
-                }, 1000);
+    for(var i=0; i<aLi.length; i++){
+        aLi[i].index = i;
+        aLi[i].onmouseover = function(e){
+            nowIndex = this.index;
+            changeImg(nowIndex);
+        }
+    }
+    oPrev.onclick = oNext.onclick = function () {
+        if(this === oPrev){
+            nowIndex --;
+            if(nowIndex == -1){
+                nowIndex = aLi.length - 1;
             }
-            function changeImg(){
-                $lis.eq(nowIndex).addClass("selected").siblings().removeClass("selected");
-                $("#imgs img").eq(nowIndex).addClass("selected").siblings().removeClass("selected");
+        }else{
+            nowIndex ++;
+            if(nowIndex == aLi.length){
+                nowIndex = 0;
             }
+        }
+        changeImg(nowIndex);
+    };
 
-        });
+    function play(){
+        timer = setInterval(function(){
+            oNext.onclick();
+        },1000);
+    }
+    play();
 
-    </script>
+    oContainer.onmouseover = function(){
+        clearInterval(timer);
+    };
+    oContainer.onmouseout = function(){
+        play();
+    }
 
+
+    function changeImg(nowIndex){
+        for(var i=0; i<aLi.length; i++){
+            aLi[i].className = '';
+            aImgs[i].className = '';
+        }
+        aLi[nowIndex].className = "selected";
+        aImgs[nowIndex].className = "selected";
+    }
+</script>
 </body>
 </html>
